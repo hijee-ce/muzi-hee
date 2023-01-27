@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hee.muzihee.musical.dao.MusicalMapper">
+
+    <select id="selectMusicalList" resultType="MusicalDto">
+        SELECT
+              ROWNUM
+            , A.*
+        FROM
+            (
+                SELECT
+                A.*,
+                B.CATEGORY_NAME
+                FROM TBL_MUSICAL A
+                    JOIN TBL_CATEGORY B
+                    ON A.MUSICAL_CATEGORY = B.CATEGORY_CODE
+                WHERE A.MUSICAL_END_DAY > SYSDATE
+                ORDER BY A.MUSICAL_NAME
+            )A
+        WHERE ROWNUM <![CDATA[ <= 8]]>
+    </select>
+
+    <select id="selectMusicalTotalForAdmin" resultType="_int">
+        SELECT
+            count(*)
+        FROM TBL_MUSICAL
+    </select>
+
+    <select id="selectMusicalListWithPagingForAdmin" resultType="MusicalDto">
+        SELECT *
+        FROM
+            (
+                SELECT
+                    ROWNUM,
+                    ALLMUSICAL.*
+                FROM
+                    (
+                        SELECT
+                        A.*
+                        ,B.CATEGORY_NAME
+                        FROM TBL_MUSICAL A
+                            JOIN TBL_CATEGORY B
+                            ON A.MUSICAL_CATEGORY = B.CATEGORY_CODE
+                        ORDER BY A.MUSICAL_CODE
+                    ) ALLMUSICAL
+                WHERE ROWNUM <![CDATA[ <= #{ endRow }]]>
+            ) WHERE ROWNUM <![CDATA[>= #{ startRow }]]>
+    </select>
+
+    <select id="selectMusicalDetailForAdmin" resultType="MusicalDto">
+        SELECT
+            A.*
+             , B.CATEGORY_NAME
+        FROM TBL_MUSICAL A
+                 JOIN TBL_CATEGORY B
+                 ON A.MUSICAL_CATEGORY = B.CATEGORY_CODE
+        WHERE MUSICAL_CODE = #{musicalCode}
+        ORDER BY MUSICAL_CODE
+    </select>
+
+
+    <!-- 모든 유저 접근 가능 -->
+    <select id="selectOriginMusicalTotal" resultType="_int">
+        SELECT
+            count(*)
+        FROM TBL_MUSICAL A
+             JOIN TBL_CATEGORY B
+             ON A.MUSICAL_CATEGORY = B.CATEGORY_CODE
+        WHERE A.MUSICAL_END_DAY > SYSDATE
+          AND A.MUSICAL_CATEGORY = 'T01'
+    </select>
+
+    <select id="selectOriginMusicalListWithPaging" resultType="MusicalDto">
+        SELECT *
+        FROM
+            (
+                SELECT
+                    ROWNUM,
+                    ALLMUSICAL.*
+                FROM
+                    (
+                        SELECT
+                            A.*
+                             ,B.CATEGORY_NAME
+                        FROM TBL_MUSICAL A
+                                 JOIN TBL_CATEGORY B
+                                 ON A.MUSICAL_CATEGORY = B.CATEGORY_CODE
+                        WHERE A.MUSICAL_CATEGORY = 'T01'
+                          AND A.MUSICAL_END_DAY > SYSDATE
+                        ORDER BY A.MUSICAL_CODE
+                    ) ALLMUSICAL
+                WHERE ROWNUM <![CDATA[ <= #{ endRow }]]>
+            ) WHERE ROWNUM <![CDATA[>= #{ startRow }]]>
+    </select>
+
+    <select id="selectCreativeMusicalTotal" resultType="_int">
+        SELECT
+            count(*)
+        FROM TBL_MUSICAL A
+                 JOIN TBL_CATEGORY B
+                      ON A.MUSICAL_CATEGORY = B.CATEGORY_CODE
+        WHERE A.MUSICAL_END_DAY > SYSDATE
+          AND A.MUSICAL_CATEGORY = 'T02'
+    </select>
+
+    <select id="selectCreativeMusicalListWithPaging" resultType="MusicalDto">
+        SELECT *
+        FROM
+            (
+                SELECT
+                    ROWNUM,
+                    ALLMUSICAL.*
+                FROM
+                    (
+                        SELECT
+                            A.*
+                             ,B.CATEGORY_NAME
+                        FROM TBL_MUSICAL A
+                                 JOIN TBL_CATEGORY B
+                                      ON A.MUSICAL_CATEGORY = B.CATEGORY_CODE
+                        WHERE A.MUSICAL_CATEGORY = 'T02'
+                          AND A.MUSICAL_END_DAY > SYSDATE
+                        ORDER BY A.MUSICAL_CODE
+                    ) ALLMUSICAL
+                WHERE ROWNUM <![CDATA[ <= #{ endRow }]]>
+            ) WHERE ROWNUM <![CDATA[>= #{ startRow }]]>
+    </select>
+
+    <select id="selectFamilyMusicalTotal" resultType="_int">
+        SELECT
+            count(*)
+        FROM TBL_MUSICAL A
+                 JOIN TBL_CATEGORY B
+                      ON A.MUSICAL_CATEGORY = B.CATEGORY_CODE
+        WHERE A.MUSICAL_END_DAY > SYSDATE
+          AND A.MUSICAL_CATEGORY = 'T03'
+    </select>
+
+    <select id="selectFamilyMusicalListWithPaging" resultType="MusicalDto">
+        SELECT *
+        FROM
+            (
+                SELECT
+                    ROWNUM,
+                    ALLMUSICAL.*
+                FROM
+                    (
+                        SELECT
+                            A.*
+                             ,B.CATEGORY_NAME
+                        FROM TBL_MUSICAL A
+                                 JOIN TBL_CATEGORY B
+                                      ON A.MUSICAL_CATEGORY = B.CATEGORY_CODE
+                        WHERE A.MUSICAL_CATEGORY = 'T03'
+                          AND A.MUSICAL_END_DAY > SYSDATE
+                        ORDER BY A.MUSICAL_CODE
+                    ) ALLMUSICAL
+                WHERE ROWNUM <![CDATA[ <= #{ endRow }]]>
+            ) WHERE ROWNUM <![CDATA[>= #{ startRow }]]>
+    </select>
+
+    <select id="selectMusicalDetail" resultType="MusicalDto">
+        SELECT
+            A.*
+             , B.CATEGORY_NAME
+        FROM TBL_MUSICAL A
+                 JOIN TBL_CATEGORY B
+                      ON A.MUSICAL_CATEGORY = B.CATEGORY_CODE
+        WHERE MUSICAL_CODE = #{musicalCode}
+          AND A.MUSICAL_END_DAY > SYSDATE
+        ORDER BY MUSICAL_CODE
+    </select>
+
+    <insert id="insertProduct" parameterType="MusicalDto">
+        INSERT INTO TBL_MUSICAL
+            (
+              MUSICAL_CODE
+            , MUSICAL_NAME
+            , MUSICAL_POSTER
+            , MUSICAL_PLACE
+            , MUSICAL_START_DAY
+            , MUSICAL_END_DAY
+            , MUSICAL_RUNTIME
+            , MUSICAL_AGE
+            , MUSICAL_PRICE
+            , MUSICAL_WHEN
+            , MUSICAL_DISCOUNT
+            , MUSICAL_DETAIL
+            , MUSICAL_CATEGORY
+            )
+        VALUES
+            (
+              SEQ_MUSICAL_CODE.NEXTVAL
+            , #{musicalName}
+            , #{musicalPoster}
+            , #{musicalPlace}
+            , #{musicalStartDay}
+            , #{musicalEndDay}
+            , #{musicalRuntime}
+            , #{musicalAge}
+            , #{musicalPrice}
+            , #{musicalWhen}
+            , #{musicalDiscount}
+            , #{musicalDetail}
+            , #{musicalCategory}
+            )
+    </insert>
+
+    <update id="updateMusical" parameterType="MusicalDto">
+        UPDATE TBL_MUSICAL
+        SET
+            MUSICAL_NAME = #{musicalName}
+            , MUSICAL_POSTER = #{musicalPoster}
+            , MUSICAL_PLACE = #{musicalPlace}
+            , MUSICAL_START_DAY = #{musicalStartDay}
+            , MUSICAL_END_DAY = #{musicalEndDay}
+            , MUSICAL_RUNTIME = #{musicalRuntime}
+            , MUSICAL_AGE = #{musicalAge}
+            , MUSICAL_PRICE = #{musicalPrice}
+            , MUSICAL_WHEN = #{musicalWhen}
+            , MUSICAL_DISCOUNT = #{musicalDiscount}
+            , MUSICAL_DETAIL = #{musicalDetail}
+            , MUSICAL_CATEGORY = #{musicalCategory}
+        WHERE MUSICAL_CODE = #{musicalCode}
+    </update>
+
+    <delete id="deleteMusical" parameterType="String">
+        DELETE FROM TBL_MUSICAL
+        WHERE MUSICAL_CODE = #{musicalCode}
+    </delete>
+</mapper>

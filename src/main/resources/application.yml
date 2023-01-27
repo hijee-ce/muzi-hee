@@ -1,0 +1,57 @@
+server:
+  port: 8092
+
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    #url: jdbc:oracle:thin:@43.200.33.166:1522/xe
+    #url: jdbc:oracle:thin:@192.168.0.24:1522/xe
+    # => 도커 컨테이너 사용할 때
+    url: jdbc:oracle:thin:@localhost:1521/xe
+    username: muzihee
+    password: muzihee
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+  web:
+    resources:
+      static-locations: classpath:/Users/jihee/musicalimgs/
+
+# 이미지 저장할 위치와 응답할 때 이미지 주소 세팅
+image:
+  # WebConfig에 세팅
+  #add-resource-locations: classpath:/static/musicalimgs/
+  #add-resource-handler: /musicalimgs/**
+
+  add-resource-locations: classpath:/Users/jihee/musicalimgs/
+  add-resource-handler: /musicalimgs/**
+
+
+  # musicalService에 세팅
+  #image-dir: src/main/resources/static/musicalimgs/
+  image-dir: /Users/jihee/musicalimgs/
+  #image-url: http://43.200.33.166:8090/musicalimgs/
+  #image-url: http://192.168.0.24:8090/musicalimgs/
+  image-url: http://localhost:8092/musicalimgs/
+
+# HS512 알고리즘을 사용할 것이기 때문에 512bit, 즉 64byte 이상의 secret key를 사용
+# Secret 값은 특정 문자열을 Base64 로 인코딩한 값 사용
+jwt:
+  #secret: dW5pLXJlYWN0LW5naW54LXNwcmluZy1ib290LWp3dC1vcmFjbGUtZG9ja2VyLWVjMi1yZWFjdC1uZ25peC1zcHJpbmctYm9vdC1qd3Qtb3JhY2xlLWRvY2tlci1lYzIK
+  secret: dW5pLXJlYWN0LW5naW54LXNwcmluZy1ib290LWp3dC1vcmFjbGUtZG9ja2VyLWVjMi1yZWFjdC1uZ25peC1zcHJpbmctYm9vdC1qd3Qtb3JhY2xlLWRvY2tlci1lYzIK
+
+mybatis:
+  # mapper.xml location Setting
+  mapper-locations: mybatis/mapper/*.xml
+  # alias Setting
+  type-aliases-package: com.hee.muzihee
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    root: info
+
+
